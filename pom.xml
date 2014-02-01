@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.utc.assos.payutc</groupId>
+  <artifactId>jcappuccino</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>JCappuccino Giga Teuf</name>
+ 
+  <repositories>
+    <repository>
+        <id>org.eclipse.jetty</id>
+        <name>Jetty Eclipse Repository</name>
+        <url>http://mvnrepository.com/artifact/org.eclipse.jetty</url>
+    </repository>
+  </repositories>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.jetty.websocket</groupId>
+      <artifactId>websocket-api</artifactId>
+      <version>9.1.1.v20140108</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.websocket</groupId>
+      <artifactId>websocket-server</artifactId>
+      <version>9.1.1.v20140108</version>
+    </dependency>
+   	<dependency>
+	  <groupId>javax</groupId>
+	  <artifactId>javaee-api</artifactId>
+	  <version>6.0</version>
+	  <scope>provided</scope>
+	</dependency>
+  </dependencies>
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution><goals><goal>java</goal></goals></execution>
+        </executions>
+        <configuration>
+          <mainClass>fr.utc.assos.payutc.JCappuccino</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
