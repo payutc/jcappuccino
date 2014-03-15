@@ -1,5 +1,6 @@
 package fr.utc.assos.payutc;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.smartcardio.Card;
@@ -44,7 +45,9 @@ public class CardReader {
 	        	new Thread(mThread).start();
 	        }
 	        else {
-	        	System.out.println("Aucun lecteur détecté.");
+	        	System.out.println("Aucun lecteur détecté, passage en mode simulation");
+	        	mThread = new FakeCardThread();
+	        	new Thread(mThread).start();
 	        }
 		}  catch (CardException e) {
 			System.out.println("Impossible de récupérer le premier lecteur.");
@@ -98,6 +101,31 @@ public class CardReader {
 					System.out.println("Impossible de communiquer avec la carte.");
 					e.printStackTrace();
 				}
+			}
+		}
+	}
+	
+	private class FakeCardThread extends CardThread {
+		private volatile boolean mRun = true;
+		
+		@Override
+		public void stop() {
+			mRun = false;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				String cardId = "123456AB";
+				while(mRun){
+					System.out.println("Appuyer sur entrée pour envoyer " + cardId.toString() + "...");
+					System.in.read();
+					System.out.println("cardInserted:" + cardId.toString());
+					mSocket.sendData("cardInserted:" + cardId.toString());
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
