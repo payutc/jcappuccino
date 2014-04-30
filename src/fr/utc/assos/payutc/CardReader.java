@@ -74,35 +74,28 @@ public class CardReader {
 			CommandAPDU GetData = new CommandAPDU(mApduArray);
 			while(mRun){
 				try {
-					System.out.println("Attente carte...");
-					mReader.waitForCardPresent(0);
-					
-					System.out.println("Carte détectée.");
-					
-					// Connect to the card currently in the reader
-					Card card = mReader.connect("*");
-					
-					// Exchange APDUs with the card
-					CardChannel channel = card.getBasicChannel();
-					ResponseAPDU CardApduResponse = channel.transmit(GetData);
-					
-					// Disconnect
-					card.disconnect(true);
-					
-					System.out.println("Carte lue");
-					
-					String carduid = getHexString(CardApduResponse.getData());
-					
-					System.out.println("cardInserted:" + carduid);
-					mSocket.sendData("cardInserted:" + carduid);
-					
-					mReader.waitForCardAbsent(0);
-					
-					System.out.println("cardRemoved:" + carduid);
-					mSocket.sendData("cardRemoved:" + carduid);
+					if(mReader.waitForCardPresent(500)) {
+						System.out.println("Carte détectée.");
+						
+						// Connect to the card currently in the reader
+						Card card = mReader.connect("*");
+						
+						// Exchange APDUs with the card
+						CardChannel channel = card.getBasicChannel();
+						ResponseAPDU CardApduResponse = channel.transmit(GetData);
+						
+						// Disconnect
+						card.disconnect(true);
+						
+						System.out.println("Carte lue");
+						
+						String carduid = getHexString(CardApduResponse.getData());
+						
+						System.out.println("cardInserted:" + carduid);
+						mSocket.sendData("cardInserted:" + carduid);						
+					}
 				} catch (CardException e) {
-					System.out.println("Impossible de communiquer avec la carte.");
-					e.printStackTrace();
+					System.out.println("Impossible de communiquer avec la carte");
 				}
 			}
 		}
