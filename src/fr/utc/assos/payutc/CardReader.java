@@ -1,6 +1,8 @@
 package fr.utc.assos.payutc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import javax.smartcardio.Card;
@@ -50,8 +52,9 @@ public class CardReader {
 	        	new Thread(mThread).start();
 	        }
 		}  catch (CardException e) {
-			System.out.println("Impossible de récupérer le premier lecteur.");
-			e.printStackTrace();
+			System.out.println("Impossible de récupérer la liste de lecteurs, passage en mode simulation");
+        	mThread = new FakeCardThread();
+        	new Thread(mThread).start();
 		}
 	}
 	
@@ -95,7 +98,7 @@ public class CardReader {
 					
 					mReader.waitForCardAbsent(0);
 					
-					System.out.println("cardInserted:" + carduid);
+					System.out.println("cardRemoved:" + carduid);
 					mSocket.sendData("cardRemoved:" + carduid);
 				} catch (CardException e) {
 					System.out.println("Impossible de communiquer avec la carte.");
@@ -119,9 +122,12 @@ public class CardReader {
 				String cardId = "123456AB";
 				while(mRun){
 					System.out.println("Appuyer sur entrée pour envoyer " + cardId.toString() + "...");
-					System.in.read();
-					System.out.println("cardInserted:" + cardId.toString());
-					mSocket.sendData("cardInserted:" + cardId.toString());
+					BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+					buffer.readLine();
+					if(mSocket.isConnected()) {
+						System.out.println("cardInserted:" + cardId.toString());
+						mSocket.sendData("cardInserted:" + cardId.toString());	
+					}
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
