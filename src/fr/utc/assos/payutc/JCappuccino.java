@@ -25,7 +25,6 @@ public class JCappuccino {
         try
         {
             server.start();
-            //server.dump(System.err);
             
             // Keep the server running until this thread is killed
             server.join();

@@ -33,6 +33,7 @@ public class Printer {
 		    job.print(mydoc, aset);    	
 		}
 		catch(Exception e) {
+			System.out.println("Échec de l'impression");
 			e.printStackTrace();
 		}
 	}

@@ -31,7 +31,7 @@ public class EventSocket extends WebSocketAdapter
     public void onWebSocketText(String message)
     {
         super.onWebSocketText(message);
-        System.out.println("Received TEXT message: " + message);
+        System.out.println("Received TEXT message");
         String[] event = message.split(":", 2);
         
         String reply = "";
