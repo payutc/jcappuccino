@@ -40,6 +40,11 @@ public class EventSocket extends WebSocketAdapter
         	System.out.println("Received ping, sending pong");
         	reply = "pong:jcappuccino/0.1";
         }
+        else if(event[0].equals("print")) {
+        	System.out.println("Received print, sending to Printer");
+        	Printer.print(event[1]);
+        	reply = "ok";
+        }
         
         if(reply.isEmpty()) {
     		reply = "error:Unknown command " + message;
