@@ -92,7 +92,9 @@ public class CardReader {
 						String carduid = getHexString(CardApduResponse.getData());
 						
 						System.out.println("cardInserted:" + carduid);
-						mSocket.sendData("cardInserted:" + carduid);						
+						mSocket.sendData("cardInserted:" + carduid);
+						
+						mReader.waitForCardAbsent(0);
 					}
 				} catch (CardException e) {
 					System.out.println("Impossible de communiquer avec la carte");
