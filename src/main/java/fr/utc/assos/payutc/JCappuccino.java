@@ -9,6 +9,7 @@ public class JCappuccino {
     public static void main(String[] args) throws Exception {
     	Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
+        connector.setHost("127.0.0.1");
         connector.setPort(9191);
         server.addConnector(connector);
 
