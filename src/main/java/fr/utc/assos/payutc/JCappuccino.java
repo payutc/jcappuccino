@@ -22,6 +22,8 @@ public class JCappuccino {
         // Add a websocket to a specific path spec
         ServletHolder holderEvents = new ServletHolder("ws-events", EventServlet.class);
         context.addServlet(holderEvents, "/events/*");
+        
+        CardReader mCardReader = new CardReader();
 
         try
         {
@@ -29,10 +31,13 @@ public class JCappuccino {
             
             // Keep the server running until this thread is killed
             server.join();
+            
+            mCardReader.close();
         }
         catch (Throwable t)
         {
             t.printStackTrace(System.err);
         }
-	}
+        
+    }
 }
