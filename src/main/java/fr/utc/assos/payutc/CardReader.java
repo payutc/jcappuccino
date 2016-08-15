@@ -3,6 +3,7 @@ package fr.utc.assos.payutc;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.smartcardio.Card;
@@ -15,8 +16,8 @@ import javax.smartcardio.TerminalFactory;
 
 public class CardReader {
 	private CardTerminal mReader;
-	private EventSocket mSocket;
-
+	private static List<EventSocket> mSockets = new ArrayList<EventSocket>();
+	
 	private byte[] mApduArray = {
 			(byte) 0xFF,
 			(byte) 0xCA,
@@ -27,11 +28,9 @@ public class CardReader {
 
 	private CardThread mThread;
 
-	public CardReader(EventSocket socket) {
+	public CardReader() {
 		try {
-			// Store pointer to socket
-			mSocket = socket;
-
+			
 			// Get the list of readers
 			TerminalFactory factory = TerminalFactory.getDefault();
 			List<CardTerminal> terminals = factory.terminals().list();
@@ -67,6 +66,22 @@ public class CardReader {
 		mThread.stop();
 	}
 
+        public static boolean addEventSocket(EventSocket e) {
+            System.out.println("Added EventSocket callback: "+e.toString()+" (Count="+(mSockets.size()+1)+")");
+            return mSockets.add(e);
+        }
+
+        public static boolean removeEventSocket(EventSocket e) {
+            System.out.println("Removed EventSocket callback: "+e.toString()+" (Count="+(mSockets.size()-1)+")");
+            return mSockets.remove(e);
+        }
+        
+        public void dispatch(String carduid) {
+            for (EventSocket mSocket : mSockets) {
+                mSocket.sendData("cardInserted:" + carduid);
+            }
+        }
+	
 	private class CardThread implements Runnable {
 		private volatile boolean mRun = true;
 
@@ -96,8 +111,8 @@ public class CardReader {
 						String carduid = getHexString(CardApduResponse.getData());
 
 						System.out.println("cardInserted:" + carduid);
-						mSocket.sendData("cardInserted:" + carduid);
-
+						dispatch(carduid);
+						
 						mReader.waitForCardAbsent(0);
 					}
 				} catch (CardException e) {
@@ -123,10 +138,9 @@ public class CardReader {
 					System.out.println("Appuyer sur entrée pour envoyer " + cardId.toString() + "...");
 					BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 					buffer.readLine();
-					if(mSocket.isConnected()) {
-						System.out.println("cardInserted:" + cardId.toString());
-						mSocket.sendData("cardInserted:" + cardId.toString());
-					}
+
+                                        System.out.println("cardInserted:" + cardId.toString());
+                                        dispatch(cardId.toString());
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
