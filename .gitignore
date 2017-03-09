@@ -5,6 +5,7 @@
 
 # Package Files #
 *.jar
+!JCappuccino_sebastien.jar
 *.war
 *.ear
 
