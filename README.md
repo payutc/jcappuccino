@@ -5,6 +5,9 @@ Standalone interface for access to hardware. Currently supports Card Readers usi
 
 First of all, check that `pcscd` is running and detects your card reader (eventually run `pcscd -df` to see its output).
 
-Run the jcappuccino using :
+Run JCappucino for the Fablab
+=================================
 
-    $ java -jar jcappuccino.jar
+Run the build for the Fablab version using:
+
+    $ java -jar JCappuccino_sebastien.jar
