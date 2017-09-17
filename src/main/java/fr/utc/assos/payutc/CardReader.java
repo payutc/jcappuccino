@@ -17,7 +17,7 @@ import javax.smartcardio.TerminalFactory;
 public class CardReader {
 	private CardTerminal mReader;
 	private static List<EventSocket> mSockets = new ArrayList<EventSocket>();
-	
+
 	private byte[] mApduArray = {
 			(byte) 0xFF,
 			(byte) 0xCA,
@@ -28,36 +28,30 @@ public class CardReader {
 
 	private CardThread mThread;
 
-	public CardReader() {
+	public CardReader(Boolean simulateReader) {
 		try {
-			
+
 			// Get the list of readers
 			TerminalFactory factory = TerminalFactory.getDefault();
 			List<CardTerminal> terminals = factory.terminals().list();
 	        System.out.println("Liste des lecteurs détectés : " + terminals);
 
 			// Choose the first reader
-      if(terminals.size() > 0){
-      	mReader = terminals.get(0);
-      	System.out.println("Connecté au premier lecteur.");
+	        if(terminals.size() > 0){
+	        	mReader = terminals.get(0);
+	        	System.out.println("Connecté au premier lecteur.");
 
-      	// Start loop in a thread
-      	mThread = new CardThread();
-      	new Thread(mThread).start();
-      }
-      else {
-				/*
-      	System.out.println("Aucun lecteur détecté, passage en mode simulation");
-      	mThread = new FakeCardThread();
-      	new Thread(mThread).start();
-				*/
-				System.out.println("Aucun lecteur détecté, on envoi un message d'erreur badgeuseNotFound");
-				mSocket.sendData("badgeuseNotFound: 1");
-      }
-
+	        	// Start loop in a thread
+	        	mThread = new CardThread();
+	        	new Thread(mThread).start();
+	        }
+	        else {
+	        	System.out.println("Aucun lecteur détecté, passage en mode simulation");
+						noReaderAction(simulateReader);
+	        }
 		}  catch (CardException e) {
-			System.out.println("Impossible de récupérer la liste de lecteurs, on envoi un message d'erreur badgeuseNotFound");
-			mSocket.sendData("badgeuseNotFound: 1");
+					System.out.println("Impossible de récupérer la liste de lecteurs");
+					noReaderAction(simulateReader);
 		}
 	}
 
@@ -66,22 +60,33 @@ public class CardReader {
 		mThread.stop();
 	}
 
-        public static boolean addEventSocket(EventSocket e) {
-            System.out.println("Added EventSocket callback: "+e.toString()+" (Count="+(mSockets.size()+1)+")");
-            return mSockets.add(e);
-        }
+	private void noReaderAction(Boolean simulateReader) {
+		if (simulateReader) {
+			System.out.println("Passage en mode simulation");
+			mThread = new FakeCardThread();
+			new Thread(mThread).start();
+		} else {
+			System.out.println("Envoie d'un message 'badgeuseNotFound'");
+			dispatch("badgeuseNotFound", "1");
+		}
+	}
 
-        public static boolean removeEventSocket(EventSocket e) {
-            System.out.println("Removed EventSocket callback: "+e.toString()+" (Count="+(mSockets.size()-1)+")");
-            return mSockets.remove(e);
-        }
-        
-        public void dispatch(String carduid) {
-            for (EventSocket mSocket : mSockets) {
-                mSocket.sendData("cardInserted:" + carduid);
-            }
-        }
-	
+  public static boolean addEventSocket(EventSocket e) {
+      System.out.println("Added EventSocket callback: "+e.toString()+" (Count="+(mSockets.size()+1)+")");
+      return mSockets.add(e);
+  }
+
+  public static boolean removeEventSocket(EventSocket e) {
+      System.out.println("Removed EventSocket callback: "+e.toString()+" (Count="+(mSockets.size()-1)+")");
+      return mSockets.remove(e);
+  }
+
+  public void dispatch(String message, String value) {
+      for (EventSocket mSocket : mSockets) {
+          mSocket.sendData(message + ":" + value);
+      }
+  }
+
 	private class CardThread implements Runnable {
 		private volatile boolean mRun = true;
 
@@ -111,8 +116,8 @@ public class CardReader {
 						String carduid = getHexString(CardApduResponse.getData());
 
 						System.out.println("cardInserted:" + carduid);
-						dispatch(carduid);
-						
+						dispatch("cardInserted", carduid);
+
 						mReader.waitForCardAbsent(0);
 					}
 				} catch (CardException e) {
@@ -139,11 +144,10 @@ public class CardReader {
 					BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 					buffer.readLine();
 
-                                        System.out.println("cardInserted:" + cardId.toString());
-                                        dispatch(cardId.toString());
+	        System.out.println("cardInserted:" + cardId.toString());
+	        dispatch("cardInserted", cardId.toString());
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
