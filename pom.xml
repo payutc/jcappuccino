@@ -2,10 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fr.utc.assos.payutc</groupId>
   <artifactId>jcappuccino</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JCappuccino Giga Teuf</name>
- 
+
   <repositories>
     <repository>
         <id>org.eclipse.jetty</id>
@@ -13,7 +13,7 @@
         <url>http://mvnrepository.com/artifact/org.eclipse.jetty</url>
     </repository>
   </repositories>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.jetty.websocket</groupId>
@@ -32,7 +32,7 @@
 	  <scope>provided</scope>
 	</dependency>
   </dependencies>
- 
+
   <build>
     <plugins>
       <plugin>
@@ -98,7 +98,7 @@
                 </configuration>
             </execution>
         </executions>
-      </plugin>        
+      </plugin>
     </plugins>
   </build>
 </project>

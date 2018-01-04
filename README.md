@@ -11,7 +11,7 @@ First of all, check that `pcscd` is running and detects your card reader (eventu
 
 Run the jcappuccino (Mac OS or generic Linux/Unix) :
 
-Run the build for the Fablab version using:
+    $ java -jar jcappuccino.jar
 
 Run the jcappuccino (Ubuntu from version 14.04 on 64bit, due to a JVM bug) :
 
@@ -19,13 +19,16 @@ Run the jcappuccino (Ubuntu from version 14.04 on 64bit, due to a JVM bug) :
 
 ### Options :
 
-| Option                   | Description                                                                    |
-| ------------------------ |:------------------------------------------------------------------------------:|
-| `ws-port=9191`         | specify port to launch ws server                                                |
-| `wss-port=9192`        | launch a wss server on 9192 port, `ws-port` and `wss-port` should be different |
-| `no-reader-simulation` | simulate a card reader instead of returning error message                      |
-| `limit-localhost`      | limit access to 127.0.0.1                                                      |
+| Option                   | Description                                                                      |
+| ------------------------ |:--------------------------------------------------------------------------------:|
+| `ws-port=9191`           | specify port to launch ws server (default: 9191)                                 |
+| `wss-port=9192`          | launch a wss server on 9192 port, `ws-port` and `wss-port` should be different   |
+| `no-reader-simulation`   | returning error message instead of simulate a card reader                        |
+| `card-id`                | set the simulated card ID (default: 123456AB)                                    |
+| `limit-localhost`        | limit access to 127.0.0.1                                                        |
 
 Exemple :
 
-    $ java -jar jcappuccino.jar -Dwss-port=9192 --no-reader-simulation
+    $ java -Dwss-port=9192 -Dno-reader-simulation -jar jcappuccino.jar
+
+Be careful to place all `-D` options before the `-jar` option.

@@ -29,6 +29,10 @@ public class CardReader {
 	private CardThread mThread;
 
 	public CardReader(Boolean simulateReader) {
+		this(simulateReader, null);
+	}
+
+	public CardReader(Boolean simulateReader, String cardId) {
 		try {
 
 			// Get the list of readers
@@ -47,11 +51,11 @@ public class CardReader {
 	        }
 	        else {
 	        	System.out.println("Aucun lecteur détecté, passage en mode simulation");
-						noReaderAction(simulateReader);
+						noReaderAction(simulateReader, cardId);
 	        }
 		}  catch (CardException e) {
 					System.out.println("Impossible de récupérer la liste de lecteurs");
-					noReaderAction(simulateReader);
+					noReaderAction(simulateReader, cardId);
 		}
 	}
 
@@ -61,9 +65,13 @@ public class CardReader {
 	}
 
 	private void noReaderAction(Boolean simulateReader) {
+		noReaderAction(simulateReader, null);
+	}
+
+	private void noReaderAction(Boolean simulateReader, String cardId) {
 		if (simulateReader) {
 			System.out.println("Passage en mode simulation");
-			mThread = new FakeCardThread();
+			mThread = new FakeCardThread(cardId);
 			new Thread(mThread).start();
 		} else {
 			System.out.println("Envoie d'un message 'badgeuseNotFound'");
@@ -129,6 +137,11 @@ public class CardReader {
 
 	private class FakeCardThread extends CardThread {
 		private volatile boolean mRun = true;
+		private String cardId;
+
+		public FakeCardThread(String cardId) {
+			this.cardId = cardId;
+		}
 
 		@Override
 		public void stop() {
@@ -138,7 +151,6 @@ public class CardReader {
 		@Override
 		public void run() {
 			try {
-				String cardId = "123456AB";
 				while(mRun){
 					System.out.println("Appuyer sur entrée pour envoyer " + cardId.toString() + "...");
 					BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
