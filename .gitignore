@@ -5,6 +5,7 @@
 
 # Package Files #
 *.jar
+!JCappuccino_sebastien.jar
 *.war
 *.ear
 
@@ -43,3 +44,5 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+keystore.jks
