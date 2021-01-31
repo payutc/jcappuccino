@@ -15,13 +15,14 @@ public class EventSocket extends WebSocketAdapter
     {
         super.onWebSocketConnect(sess);
         mSession = sess;
-        mCardReader = new CardReader(this);
+        CardReader.addEventSocket(this);
         System.out.println("Socket Connected: " + sess);
     }
     
     public void sendData(String message) {
     	try {
-        	mSession.getRemote().sendString(message);
+            if(!this.isConnected()) return;
+            mSession.getRemote().sendString(message);
         } catch (IOException x) {
             mSession.close();
         }
@@ -62,8 +63,7 @@ public class EventSocket extends WebSocketAdapter
     {
         super.onWebSocketClose(statusCode,reason);
         System.out.println("Socket Closed: [" + statusCode + "] " + reason);
-        
-        mCardReader.close();
+        CardReader.removeEventSocket(this);
     }
     
     @Override

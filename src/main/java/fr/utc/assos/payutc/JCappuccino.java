@@ -9,6 +9,7 @@ public class JCappuccino {
     public static void main(String[] args) throws Exception {
     	Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
+        connector.setHost("127.0.0.1");
         connector.setPort(9191);
         server.addConnector(connector);
 
@@ -21,6 +22,8 @@ public class JCappuccino {
         // Add a websocket to a specific path spec
         ServletHolder holderEvents = new ServletHolder("ws-events", EventServlet.class);
         context.addServlet(holderEvents, "/events/*");
+        
+        CardReader mCardReader = new CardReader();
 
         try
         {
@@ -28,10 +31,13 @@ public class JCappuccino {
             
             // Keep the server running until this thread is killed
             server.join();
+            
+            mCardReader.close();
         }
         catch (Throwable t)
         {
             t.printStackTrace(System.err);
         }
-	}
+        
+    }
 }
